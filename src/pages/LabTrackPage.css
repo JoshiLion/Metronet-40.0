@@ -1,0 +1,42 @@
+.labtrack-container {
+  background: var(--color-white);
+  border-radius: 20px;
+  padding: 2rem;
+}
+
+.labtrack-title {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+}
+
+.labtrack-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.labtrack-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.labtrack-item:hover {
+  background: rgba(113, 0, 123, 0.05);
+}
+
+.labtrack-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: var(--color-primary);
+  transition: transform 0.2s;
+}
+
+.labtrack-item:hover .labtrack-icon {
+  transform: translateX(4px);
+}

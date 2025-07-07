@@ -1,0 +1,52 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 4rem 1.5rem 4rem;
+  height: 64px;
+  background: var(--color-bg);
+  /*border-bottom: 1px solid rgba(0,0,0,0.08);*/
+  
+}
+
+.app-header__left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-header__logo {
+  height: 40px;
+  width: auto;
+}
+
+.app-header__title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.app-header__right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.icon-button {
+  background: var(--color-white);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.icon-button:hover {
+  background: #e0e0e0;
+}
+
+.icon-button__icon {
+  width: 24px;
+  height: 24px;
+  fill: var(--color-primary);
+}

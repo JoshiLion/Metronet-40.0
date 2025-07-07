@@ -1,0 +1,100 @@
+.nav-item {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/*  ➤ Conjunto de medidas para que sea cuadrado: */
+.nav-item__icon-wrapper {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+
+  background: var(--color-white);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+/* Hover sobre el wrapper */
+.nav-item__icon-wrapper:hover {
+  background: var(--color-white-hover);
+}
+
+/* Estado seleccionado sólo afecta al wrapper */
+.nav-item__icon-wrapper--selected {
+  background: var(--color-primary);
+}
+
+/* Icono hereda fill desde aquí */
+.nav-item__icon {
+  width: 24px;
+  height: 24px;
+  fill: var(--color-primary);
+  transition: fill 0.2s ease;
+}
+
+.nav-item__icon-wrapper--selected .nav-item__icon {
+  fill: var(--color-white);
+}
+
+/* 1) Etiqueta siempre presente pero invisible */
+.nav-item__label {
+  opacity: 0;
+  transition: opacity 0.2s ease;  /* duracion del fade */
+  white-space: nowrap;
+  /* reserva ancho suficiente: */
+  width: 80px; /* ajusta al ancho máximo de tus labels */
+  overflow: hidden;
+}
+
+
+/* cuando el navbar está abierto, el hover debe pintar el fondo entero */
+.nav-item--open:hover {
+  background: var(--color-white-hover);       /* gris suave */
+  border-radius: 8px;        /* mismo radio que el icon-wrapper */
+}
+
+/* pero el estado “selected” del botón completo NO cambia todo el fondo,
+   solo deja transparente para que el icon-wrapper (cuadrado) siga coloreado */
+.nav-item--open.nav-item--selected {
+  background: transparent;
+}
+
+/* si necesitas, reducir el padding para que no expanda demasiado: */
+.nav-item {
+  padding: 4px; /* ajusta según necesites */
+}
+
+
+/* Cuando el navbar está abierto y haces hover sobre la fila,
+   pinta también el icon-wrapper si NO está seleccionado */
+.nav-item--open:hover .nav-item__icon-wrapper:not(.nav-item__icon-wrapper--selected) {
+  background-color: var(--color-white-hover);
+}
+
+
+/* Anula el gris de fila en selected */
+.nav-item--open.nav-item--selected:hover {
+  background: transparent;
+}
+
+/* Mantén el wrapper morado en selected incluso al hover */
+.nav-item__icon-wrapper--selected,
+.nav-item__icon-wrapper--selected:hover {
+  background-color: var(--color-primary);
+}
+
+
+/* 2) Cuando el nav esté abierto, hacemos fade‐in con delay */
+.navbar--open .nav-item__label {
+  opacity: 1;
+  transition-delay: 0.25s;  /* espera que el nav haya crecido */
+}

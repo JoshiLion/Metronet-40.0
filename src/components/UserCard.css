@@ -1,0 +1,59 @@
+.user-card {
+  background: var(--color-white);
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.user-card__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-card__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-card__avatar svg {
+  width: 48px;
+  height: 48px;
+  fill: var(--color-primary);
+}
+
+.user-card__info {
+  flex: 1;
+}
+
+.user-card__name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+
+.user-card__id {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  margin: 0 0 0.5rem;
+}
+
+.user-card__career {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+
+.user-card__avatar img.avatar-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}

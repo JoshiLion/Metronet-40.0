@@ -1,0 +1,22 @@
+.primary-button {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 0.7rem 4rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin: 1.5rem auto 0;
+  display: block;
+  min-width: 160px;
+}
+
+.primary-button:hover {
+  background-color: #5c0069; /* más oscuro */
+}
+
+.primary-button:active {
+  background-color: #46004f; /* aún más oscuro */
+}

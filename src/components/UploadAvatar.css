@@ -1,0 +1,22 @@
+.upload-avatar {
+  margin-top: 1rem;
+}
+
+.upload-avatar__label {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--color-white);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-primary);
+  transition: background 0.2s;
+}
+
+.upload-avatar__label:hover {
+  background: #f0f0f0;
+}
+
+.upload-avatar__input {
+  display: none;
+}

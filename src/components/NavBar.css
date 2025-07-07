@@ -1,0 +1,71 @@
+.navbar {
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease;
+  border-right: 1px solid #e0e0e0;
+  padding: 1.5rem;
+  height: 100vh;
+ 
+  /* ancho ya definido por navbar--open/closed */
+}
+
+.navbar--closed { width: 60px; }
+.navbar--open   { width: 200px; }
+
+/* 🚩 Contenedor que crece con el nav y posiciona el toggle */
+.navbar__toggle-container {
+  width: 100%;
+  display: flex;
+  /* por defecto en cerrado: centrar */
+  justify-content: center;
+  padding: 1rem 0;
+}
+/* cuando está abierto, movemos el toggle al extremo derecho */
+.navbar--open .navbar__toggle-container {
+  justify-content: flex-end;
+}
+
+/* El botón sigue siendo cuadrado blanco */
+.navbar__toggle {
+  width: 48px;
+  height: 48px;
+  background: var(--color-white);
+  border: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.navbar__toggle:hover {
+  background: #e0e0e0;
+}
+.navbar__toggle svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--color-primary);
+}
+
+/* Lista de nav items, igual que antes */
+.navbar__list {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+
+.navbar--open .nav-item__label {
+  opacity: 1;
+  transition: opacity 0.2s ease 0.3s; /* delay igual al width */
+}
+
+
+.navbar__footer {
+  margin-top: auto;    
+  padding: 0 0 4rem 0 ;      
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}

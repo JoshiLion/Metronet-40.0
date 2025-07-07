@@ -1,0 +1,18 @@
+:root {
+  --color-bg: #ECF0F5;
+  --color-primary: #71007B;
+  --color-white: #ffffff;
+  --color-text: #333333;
+  --color-placeholder: #999999;
+
+    /* Nuevas variables para InputField */
+  --input-border-default: #ddd;
+  --input-border-hover: #B7B7B7;
+  --input-border-active: #71007B;     /* Morado un poco más oscuro */
+  --input-bg-active: rgba(113, 0, 123, 0.05); /* Fondo leve al presionar */
+
+
+   /* Nuevas variables para bortones secundarios */
+   --color-white-hover: #D9E0E8;
+   
+}
