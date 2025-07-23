@@ -44,7 +44,7 @@ export default function LoginPage() {
     <div className="login-preview-container">
       <form className="login-box" onSubmit={handleSubmit}>
         <div className="login-box__header">
-          <h2>METRONT</h2>
+          <h2>METRONET</h2>
         </div>
 
         <div className="login-box__fields">
