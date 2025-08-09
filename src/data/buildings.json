@@ -1,0 +1,43 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "name": "Biblioteca",
+        "description": "Centro de recursos y préstamo de libros.",
+        "image360_url": "https://example.com/biblio360.jpg",
+        "carreras": ["Ing. Sistemas", "Ing. Industrial"],
+        "aulas": ["Aula Magna"],
+        "oficinas": ["Ventanilla de Préstamos"],
+        "personal": [
+          { "name": "Dra. Luna Pérez", "role": "Bibliotecaria", "contactUrl": "#" }
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-98.8890, 19.9457], [-98.8890, 19.9460], [-98.8886, 19.9460], [-98.8886, 19.9457], [-98.8890, 19.9457]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "name": "Cafetería",
+        "description": "Zona de alimentos y bebidas.",
+        "image360_url": "https://example.com/cafe360.jpg",
+        "carreras": [],
+        "aulas": [],
+        "oficinas": ["Administración Cafetería"],
+        "personal": [
+          { "name": "Sr. Juan Ramírez", "role": "Encargado", "contactUrl": "#" }
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-98.8886, 19.9460]
+      }
+    }
+  ]
+}

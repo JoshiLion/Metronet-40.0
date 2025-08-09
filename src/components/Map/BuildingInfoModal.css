@@ -1,0 +1,43 @@
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-window {
+  background: #ECF0F5;
+  border-radius: 12px;
+  width: 90%; max-width: 480px;
+  overflow: hidden;
+  position: relative;
+}
+.close-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: transparent; border: none;
+  font-size: 1.5rem; cursor: pointer;
+}
+.image-360 img {
+  width: 100%; height: auto;
+  display: block;
+}
+.tabs {
+  display: flex; border-bottom: 1px solid #ddd;
+}
+.tab {
+  flex: 1; padding: 12px;
+  background: white; border: none; cursor: pointer;
+}
+.tab.active {
+  color: #71007B;
+  border-bottom: 3px solid #71007B;
+}
+.tab-content {
+  list-style: none; margin: 0; padding: 0;
+}
+.tab-content li {
+  padding: 12px; border-bottom: 1px solid #ddd;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.staff-item .contact-link {
+  color: #71007B; text-decoration: none;
+  font-size: 0.9rem;
+}

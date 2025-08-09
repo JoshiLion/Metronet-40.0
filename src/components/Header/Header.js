@@ -1,7 +1,7 @@
 import React from 'react'
 import './Header.css'
-import { ReactComponent as UserIcon } from '../assets/user.svg'
-import { ReactComponent as BellIcon } from '../assets/bell.svg'  // futuro
+import { ReactComponent as UserIcon } from '../../assets/iconos/user.svg'
+import { ReactComponent as BellIcon } from '../../assets/iconos/bell.svg'  // futuro
 
 export default function Header() {
   return (

@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { supabase } from '../supabaseClient'
-import { useAuth } from '../context/AuthContext'
+import { supabase } from '../../supabaseClient'
+import { useAuth } from '../../context/AuthContext'
 import NavItem from './NavItem'
-import { ReactComponent as MenuIcon }   from '../assets/menu.svg'
-import { ReactComponent as CloseIcon }  from '../assets/close.svg'
-import { ReactComponent as ProfileIcon }from '../assets/user.svg'
-import { ReactComponent as LabIcon }    from '../assets/monitor.svg'
-import { ReactComponent as LogoutIcon } from '../assets/logout.svg'
+import { ReactComponent as MenuIcon }   from '../../assets/iconos/menu.svg'
+import { ReactComponent as CloseIcon }  from '../../assets/iconos/close.svg'
+import { ReactComponent as ProfileIcon }from '../../assets/iconos/user.svg'
+import { ReactComponent as LabIcon }    from '../../assets/iconos/monitor.svg'
+import { ReactComponent as LogoutIcon } from '../../assets/iconos/logout.svg'
+import { ReactComponent as MapIcon } from '../../assets/iconos/map.svg'
 import './NavBar.css'
 
 export default function NavBar() {
@@ -21,7 +22,8 @@ export default function NavBar() {
 
   // Botones siempre visibles
   const items = [
-    { id: 'profile', label: 'Mi perfil', icon: ProfileIcon, path: '/' }
+    { id: 'profile', label: 'Mi perfil', icon: ProfileIcon, path: '/' },
+    { id: 'map',     label: 'Mapa',      icon: MapIcon,     path: '/map' }
   ]
 
   // Mostrar LabTrack solo a profesores encargados

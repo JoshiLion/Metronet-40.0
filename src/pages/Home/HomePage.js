@@ -1,7 +1,6 @@
 import React from 'react'
-import UserCard from '../components/UserCard'
-import UploadAvatar from '../components/UploadAvatar'
-import { useAuth } from '../context/AuthContext'
+import UserCard  from '../../components/UserCard/UserCard'
+import { useAuth } from '../../context/AuthContext'
 import './HomePage.css'
 
 export default function HomePage() {

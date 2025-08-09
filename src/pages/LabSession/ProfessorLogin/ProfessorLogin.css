@@ -1,0 +1,82 @@
+.professor-login {
+  max-width: 360px;
+  margin: 4rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.pl-title {
+  margin-bottom: 1rem;
+  font-size: 1.75rem;
+  color: var(--color-primary);
+}
+
+.pl-instruction {
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+.pl-error {
+  color: #e74c3c;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.pl-dots {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.pl-dot {
+  width: 12px;
+  height: 12px;
+  margin: 0 6px;
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.pl-dot.filled {
+  background: var(--color-primary);
+}
+
+.pl-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.pl-keypad .pl-key,
+.pl-keypad button.pl-back,
+.pl-keypad button.pl-ok {
+  padding: 1rem 0;
+  font-size: 1.25rem;
+  background: none;
+  border: 2px solid var(--color-primary);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pl-keypad .pl-key:hover,
+.pl-keypad .pl-back:hover {
+  background: rgba(113,0,123,0.1);
+}
+
+.pl-back {
+  color: #333;
+}
+
+.pl-ok {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.pl-ok:hover {
+  background: #5a006f;
+}

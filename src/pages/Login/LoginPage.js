@@ -1,10 +1,10 @@
 // src/pages/LoginPage.js
 import { useState } from 'react'
-import { supabase } from '../supabaseClient'
-import InputField from '../components/inputField'
-import PrimaryButton from '../components/primaryButton'
-import { ReactComponent as UserIcon } from '../assets/user.svg'
-import { ReactComponent as LockIcon } from '../assets/lock.svg'
+import { supabase } from '../../supabaseClient'
+import InputField from '../../components/InputField/inputField'
+import PrimaryButton from '../../components/PrimaryButton/primaryButton'
+import { ReactComponent as UserIcon } from '../../assets/iconos/user.svg'
+import { ReactComponent as LockIcon } from '../../assets/iconos/lock.svg'
 import './LoginPreview.css'  // reaprovechamos estilos
 
 export default function LoginPage() {

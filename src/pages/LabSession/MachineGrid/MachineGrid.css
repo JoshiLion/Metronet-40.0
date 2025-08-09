@@ -1,0 +1,22 @@
+/* src/pages/LabSession/MachineGrid/MachineGrid.css */
+.machine-grid {
+  max-width: 600px;
+  margin: 2rem auto;
+  text-align: center;
+}
+.machine-grid .grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.machine-grid .machine-card {
+  padding: 1.5rem 0;
+  border: 2px solid var(--color-primary);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.machine-grid .machine-card:hover {
+  background: rgba(113,0,123,0.1);
+}

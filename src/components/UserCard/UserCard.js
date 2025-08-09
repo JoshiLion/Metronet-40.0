@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { supabase } from '../supabaseClient'
+import { supabase } from '../../supabaseClient'
 import './UserCard.css'
-import { ReactComponent as DefaultAvatar } from '../assets/user.svg'
+import { ReactComponent as DefaultAvatar } from '../../assets/iconos/user.svg'
 
 export default function UserCard({ user }) {
   const [avatarUrl, setAvatarUrl] = useState(null)

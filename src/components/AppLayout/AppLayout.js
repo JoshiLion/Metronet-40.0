@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import NavBar      from './NavBar'
-import Header      from './Header'
+import NavBar      from '../NavBar/NavBar'
+import Header      from '../Header/Header'
 import './AppLayout.css'
 
 export default function AppLayout() {

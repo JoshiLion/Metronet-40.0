@@ -1,0 +1,16 @@
+/* src/pages/LabSession/Timer/Timer.css */
+.timer {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: bold;
+  font-size: 1rem;
+  z-index: 1000;
+}
+.timer.session-ended {
+  background: #e74c3c;
+}
