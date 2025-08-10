@@ -3,40 +3,41 @@
   "features": [
     {
       "type": "Feature",
+      "id": "ud1",
       "properties": {
-        "id": 1,
-        "name": "Biblioteca",
-        "description": "Centro de recursos y préstamo de libros.",
-        "image360_url": "https://example.com/biblio360.jpg",
-        "carreras": ["Ing. Sistemas", "Ing. Industrial"],
-        "aulas": ["Aula Magna"],
-        "oficinas": ["Ventanilla de Préstamos"],
+        "nombre": "UD1",
+        "carreras": ["Ing. TI"],
+        "aulas": ["UD1-101","UD1-102"],
+        "oficinas": ["Servicios Escolares"],
         "personal": [
-          { "name": "Dra. Luna Pérez", "role": "Bibliotecaria", "contactUrl": "#" }
+          { "name": "María López", "role": "Directora" },
+          { "name": "Juan Pérez", "role": "Profesor" }
         ]
       },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[-98.8890, 19.9457], [-98.8890, 19.9460], [-98.8886, 19.9460], [-98.8886, 19.9457], [-98.8890, 19.9457]]]
+        "coordinates": [[
+          [-98.88950, 19.94540],
+          [-98.88950, 19.94585],
+          [-98.88895, 19.94585],
+          [-98.88895, 19.94540],
+          [-98.88950, 19.94540]
+        ]]
       }
     },
     {
       "type": "Feature",
+      "id": "cafeteria",
       "properties": {
-        "id": 2,
-        "name": "Cafetería",
-        "description": "Zona de alimentos y bebidas.",
-        "image360_url": "https://example.com/cafe360.jpg",
+        "nombre": "Cafetería",
         "carreras": [],
         "aulas": [],
-        "oficinas": ["Administración Cafetería"],
-        "personal": [
-          { "name": "Sr. Juan Ramírez", "role": "Encargado", "contactUrl": "#" }
-        ]
+        "oficinas": [],
+        "personal": [{ "name": "Laura Ruiz", "role": "Encargada" }]
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-98.8886, 19.9460]
+        "coordinates": [-98.88850, 19.94595]
       }
     }
   ]
