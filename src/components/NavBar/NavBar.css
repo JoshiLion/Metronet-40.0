@@ -1,15 +1,15 @@
 .navbar {
   display: flex;
   flex-direction: column;
-  transition: width 0.2s ease;
+  transition: width 0.2s ease, transform 0.25s ease; /* + transform para móvil */
   border-right: 1px solid #e0e0e0;
   padding: 1.5rem;
   height: 100vh;
- 
+  
   /* ancho ya definido por navbar--open/closed */
 }
 
-.navbar--closed { width: 60px; }
+.navbar--closed { width: 50px; }
 .navbar--open   { width: 200px; }
 
 /* 🚩 Contenedor que crece con el nav y posiciona el toggle */
@@ -27,23 +27,24 @@
 
 /* El botón sigue siendo cuadrado blanco */
 .navbar__toggle {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   background: var(--color-white);
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  
   transition: background 0.3s ease;
 }
-.navbar__toggle:hover {
-  background: #e0e0e0;
-}
+
+
+.navbar__toggle:hover { background: #e0e0e0; }
 .navbar__toggle svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   fill: var(--color-primary);
 }
 
@@ -52,20 +53,72 @@
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
+  
   gap: 0.75rem;
 }
-
 
 .navbar--open .nav-item__label {
   opacity: 1;
   transition: opacity 0.2s ease 0.3s; /* delay igual al width */
 }
 
-
 .navbar__footer {
-  margin-top: auto;    
-  padding: 0 0 4rem 0 ;      
+  margin-top: auto;
+  padding: 0 0 4rem 0;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
+
+/* ======= Responsive: drawer en móvil ======= */
+@media (max-width: 768px) {
+  .navbar {
+    position: fixed;
+    inset: 0 auto 0 0;       /* left drawer */
+    height: 100vh;
+    padding-top: 2rem;
+    width: min(80vw, 200px); /* ancho del panel en móvil */
+    transform: translateX(-100%); /* oculto por defecto */
+    z-index: 100;
+    background: #ECF0F5;
+    box-shadow: 0 10px 30px rgba(0,0,0,.12);
+    
+  }
+  .navbar__toggle {
+
+  display: none;
+ 
+}
+
+  /* en móvil usamos transform para abrir/cerrar */
+  .navbar--open   { transform: translateX(0); }
+  .navbar--closed { transform: translateX(-100%); }
+
+  /* el toggle se alinea a la derecha dentro del drawer */
+  .navbar__toggle-container {
+    justify-content: flex-end;
+    padding-top: .25rem;
+    padding-bottom: .75rem;
+  }
+}
+
+/* Backdrop: queda como hermano inmediato del <nav> */
+.navbar__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.28);
+  backdrop-filter: blur(1px);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+@media (max-width: 768px) {
+  /* cuando el nav está abierto, mostramos el backdrop */
+  .navbar--open + .navbar__backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+

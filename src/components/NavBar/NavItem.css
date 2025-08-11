@@ -11,34 +11,29 @@
 
 /*  ➤ Conjunto de medidas para que sea cuadrado: */
 .nav-item__icon-wrapper {
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-
-  background: var(--color-white);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s ease;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  transition: background-color .2s ease, transform .2s ease;
 }
 
-/* Hover sobre el wrapper */
 .nav-item__icon-wrapper:hover {
-  background: var(--color-white-hover);
+  background-color: color-mix(in srgb, var(--color-primary) 10%, white);
 }
-
-/* Estado seleccionado sólo afecta al wrapper */
 .nav-item__icon-wrapper--selected {
-  background: var(--color-primary);
+  background-color: var(--color-primary);
+  color: white;
 }
-
-/* Icono hereda fill desde aquí */
+/* SVG ~18–20px */
 .nav-item__icon {
-  width: 24px;
-  height: 24px;
-  fill: var(--color-primary);
-  transition: fill 0.2s ease;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  color: #444;
 }
 
 .nav-item__icon-wrapper--selected .nav-item__icon {
@@ -48,8 +43,12 @@
 /* 1) Etiqueta siempre presente pero invisible */
 .nav-item__label {
   opacity: 0;
+  font-size: 0.9rem;
+
   transition: opacity 0.2s ease;  /* duracion del fade */
   white-space: nowrap;
+  font-size: 0.9rem;
+  line-height: 1;
   /* reserva ancho suficiente: */
   width: 80px; /* ajusta al ancho máximo de tus labels */
   overflow: hidden;

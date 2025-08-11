@@ -8,3 +8,9 @@ console.log("▶ supabaseAnonKey starts with:", supabaseAnonKey?.substr(0, 8))
 
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+
+
+if (process.env.NODE_ENV === 'development') {
+  window.sb = supabase; // 👈 para usar sb en consola
+}

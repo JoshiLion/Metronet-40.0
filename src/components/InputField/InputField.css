@@ -1,6 +1,4 @@
-.input-group {
-  margin-bottom: 1.5rem;
-}
+.input-group { margin-bottom: 1.5rem; }
 
 .input-group__label {
   display: flex;
@@ -8,8 +6,6 @@
   color: var(--color-text);
   margin-bottom: 0.7rem;
   margin-left: 1rem;
-  
-  
 }
 
 .input-wrapper {
@@ -19,8 +15,6 @@
   border: 1px solid #ddd;
   border-radius: 50px;
   overflow: hidden;
-  
- 
 }
 
 .input-wrapper__input {
@@ -31,13 +25,8 @@
   font-size: 1rem;
   color: var(--color-text);
   background: transparent;
-  
-
 }
-
-.input-wrapper__input::placeholder {
-  color: var(--color-placeholder);
-}
+.input-wrapper__input::placeholder { color: var(--color-placeholder); }
 
 .input-wrapper__icon {
   display: flex;
@@ -47,18 +36,23 @@
   border-left: 1px solid #ddd;
   color: var(--color-primary);
 }
+.input-wrapper__icon svg { width: 1.25rem; height: 1.25rem; }
 
-.input-wrapper__icon svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
+.input-wrapper:hover { border-color: var(--input-border-hover); }
+.input-wrapper:focus-within { border-color: var(--input-border-active); }
 
-
-.input-wrapper:hover {
-  border-color: var(--input-border-hover);
-}
-
-/* CUANDO el input adentro recibe focus */
-.input-wrapper:focus-within {
-  border-color: var(--input-border-active);
+/* ===== Responsivo ===== */
+@media (max-width: 640px) {
+  .input-group__label {
+    margin-left: 0.5rem;
+    font-size: 0.95rem;
+  }
+  .input-wrapper {
+    border-radius: 18px;
+  }
+  .input-wrapper__input {
+    padding: 0.65rem 0.9rem;
+    font-size: 0.98rem;
+  }
+  .input-wrapper__icon { padding: 0 0.75rem; }
 }

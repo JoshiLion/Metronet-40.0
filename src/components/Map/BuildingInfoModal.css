@@ -1,43 +1,153 @@
-.modal-backdrop {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.4);
-  display: flex; align-items: center; justify-content: center;
+:root {
+  --brand: #71007B;
+  --bg: #ECF0F5;
+  --radius: 24px;
 }
-.modal-window {
-  background: #ECF0F5;
-  border-radius: 12px;
-  width: 90%; max-width: 480px;
+
+/* Scrim anclado al host del mapa */
+.card-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.14);
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
+  margin: 0;
+  transition: opacity 180ms ease;
+  z-index: 20;
+}
+.card-scrim.open { opacity: 1; pointer-events: auto; }
+
+/* Panel: derecha en desktop */
+.card-panel {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  bottom: 40px;
+  width: 400px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.18);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(110%);
+  transition: transform 260ms cubic-bezier(.2,.7,.2,1);
+  z-index: 30;
+}
+.card-panel.open { transform: translateX(0); }
+.card-panel.closing { transform: translateX(110%); }
+
+/* Mobile: bottom sheet */
+@media (max-width: 768px) {
+  .card-panel {
+    left: 16px;
+    right: 16px;
+    bottom: 35px;
+    top: auto;
+    width: auto;
+    height: 45vh;
+    border-radius: 10px;
+    transform: translateY(110%);
+  }
+  .card-panel.open { transform: translateY(0); }
+  .card-panel.closing { transform: translateY(110%); }
+}
+
+/* Cover */
+.card-cover { position: relative; height: 180px; background: var(--bg); }
+.card-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.card-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 32px; height: 32px; border: none; border-radius: 999px;
+  background: rgba(255,255,255,.92);
+  display: grid; place-items: center; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+.card-close:hover { transform: scale(1.04); }
+
+.card-360 {
+  position: absolute; right: 14px; bottom: 14px;
+  width: 40px; height: 40px; border-radius: 999px;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 12px;
+}
+
+/* Tabs */
+.card-tabs {
   position: relative;
+  display: flex; gap: 18px;
+  padding: 12px 14px 0 14px;
+  border-bottom: 1px solid #eee;
 }
-.close-btn {
-  position: absolute; top: 8px; right: 8px;
-  background: transparent; border: none;
-  font-size: 1.5rem; cursor: pointer;
+.card-tab {
+  background: transparent; border: none; cursor: pointer;
+  padding: 10px 4px 12px; font-weight: 600; color: #666;
 }
-.image-360 img {
-  width: 100%; height: auto;
-  display: block;
+.card-tab.active { color: #111; }
+.card-underline {
+  position: absolute; bottom: -1px; height: 3px; border-radius: 999px;
+  transition: left 200ms ease, width 200ms ease;
 }
-.tabs {
-  display: flex; border-bottom: 1px solid #ddd;
+
+/* List */
+.card-list {
+  flex: 1;
+  overflow: auto;
+  padding: 8px 10px 12px 10px;
 }
-.tab {
-  flex: 1; padding: 12px;
-  background: white; border: none; cursor: pointer;
+
+.card-row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  background: #fff;
+  margin: 6px 2px;
+  transition: background 140ms ease, transform 140ms ease;
 }
-.tab.active {
-  color: #71007B;
-  border-bottom: 3px solid #71007B;
+.card-row:hover { background: #fafafa; transform: translateY(-1px); }
+
+.card-avatar {
+  width: 44px; height: 44px; border-radius: 999px; overflow: hidden;
+  background: var(--bg); display: grid; place-items: center;
+  font-size: 20px;
 }
-.tab-content {
-  list-style: none; margin: 0; padding: 0;
+.card-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.card-row-text { min-width: 0; }
+.card-row-title { margin: 0; font-size: 15px; line-height: 1.2; color: #111; }
+.card-row-sub { margin: 2px 0 0; font-size: 12px; color: #6b7280; }
+
+.card-action {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--brand); border: 0; background: transparent;
+  cursor: pointer; text-decoration: none;
 }
-.tab-content li {
-  padding: 12px; border-bottom: 1px solid #ddd;
-  display: flex; justify-content: space-between; align-items: center;
+.card-action svg { display: block; }
+
+
+/* Mantén el layout de 3 columnas solo cuando hay avatar */
+.card-row--with-avatar {
+  grid-template-columns: 44px 1fr auto;
 }
-.staff-item .contact-link {
-  color: #71007B; text-decoration: none;
-  font-size: 0.9rem;
+
+/* Para Carreras / Aulas / Oficinas: sin avatar = más ancho para el texto */
+.card-row--simple {
+  grid-template-columns: 1fr;         /* quita la columna fantasma */
+  padding: 16px 14px;                 /* un pelín más de aire */
+  gap: 8px;
+}
+
+/* Un poco más cómodo para textos largos */
+.card-row--simple .card-row-title {
+  font-size: 16px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;            /* evita cortes raros */
 }

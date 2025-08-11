@@ -6,7 +6,8 @@ import * as turf from '@turf/turf';
 import { supabase } from '../../supabaseClient';
 
 import BuildingInfoModal from './BuildingInfoModal';
-// Este import puede llegar como objeto o como URL según tu bundler
+// Si ya pusiste el parchado, puedes usar:
+// import buildingsGeo from '../../data/buildings.patched.geojson';
 import buildingsGeo from '../../data/buildings.geojson';
 
 const MAP_STYLE =
@@ -19,22 +20,29 @@ const SOURCE_ID = 'buildings';
 const FILL_LAYER_ID = 'buildings-fill';
 const POINT_LAYER_ID = 'buildings-points';
 
-// ---- Helper robusto para evitar crasheos cuando el style no está listo ----
+/* ---------- Helpers defensivos ---------- */
+function styleReady(map) {
+  try { return !!map?.getStyle?.(); } catch { return false; }
+}
+function hasSource(map, id) {
+  try { return !!map?.getSource?.(id); } catch { return false; }
+}
+function hasLayer(map, id) {
+  try {
+    const style = map?.getStyle?.();
+    return !!style?.layers?.some(l => l.id === id);
+  } catch { return false; }
+}
+function firstSymbolId(map) {
+  try { return map?.getStyle?.()?.layers?.find(l => l.type === 'symbol')?.id; }
+  catch { return undefined; }
+}
 function safeSetFeatureState(map, source, id, state) {
   try {
-    if (!map || !map.style) return;
-    if (id === null || id === undefined) return;
-    if (typeof map.getSource !== 'function') return;
-    const src = map.getSource(source);
-    if (!src) return;
-    if (typeof map.isStyleLoaded === 'function' && !map.isStyleLoaded()) return;
+    if (!styleReady(map) || id == null || !hasSource(map, source)) return;
     map.setFeatureState({ source, id }, state);
-  } catch (e) {
-    console.warn('skip setFeatureState:', e);
-  }
+  } catch (e) { console.warn('skip setFeatureState:', e); }
 }
-
-// Carga robusta del GeoJSON (objeto o URL)
 async function loadGeoJSON(maybeObjOrUrl) {
   if (maybeObjOrUrl && typeof maybeObjOrUrl === 'object') return maybeObjOrUrl;
   if (typeof maybeObjOrUrl === 'string') {
@@ -46,15 +54,88 @@ async function loadGeoJSON(maybeObjOrUrl) {
   if (!res.ok) throw new Error(`GeoJSON (public) HTTP ${res.status}`);
   return await res.json();
 }
+/* ---------------------------------------- */
+
+/** Trae datos reales de Supabase para el edificio dado */
+async function fetchBuildingData(buildingId) {
+  // 1) Personal (JOIN embebido a profiles)
+  const staffQ = supabase
+    .from('building_staff')
+    .select(`
+      title,
+      room_code,
+      profiles:profile_id (
+        first_name,
+        last_name,
+        avatar_url,
+        identifier,
+        email
+      )
+    `)
+    .eq('building_id', buildingId)
+    .order('title', { ascending: true });
+
+  // 2) Programas del edificio
+  const programsQ = supabase
+    .from('building_programs')
+    .select(`programs ( id, name )`)
+    .eq('building_id', buildingId);
+
+  // 3) Aulas/Oficinas (rooms)
+  const roomsQ = supabase
+    .from('rooms')
+    .select(`id, code, kind`)
+    .eq('building_id', buildingId)
+    .order('code', { ascending: true });
+
+  const [staffRes, programsRes, roomsRes] = await Promise.all([staffQ, programsQ, roomsQ]);
+
+  if (staffRes.error)    console.error('staff error', staffRes.error);
+  if (programsRes.error) console.error('programs error', programsRes.error);
+  if (roomsRes.error)    console.error('rooms error', roomsRes.error);
+
+  // Normaliza Personal para la card
+  const personal = (staffRes.data || [])
+    .filter(r => r?.profiles)
+    .map(r => {
+      const p = r.profiles;
+      const name = [p.first_name ?? '', p.last_name ?? ''].join(' ').trim() || (p.identifier || 'Sin nombre');
+      // Gmail compose directo
+      const gmailUrl = p.email
+        ? `https://mail.google.com/mail/?view=cm&fs=1&to=${
+            encodeURIComponent(p.email)
+          }&su=${encodeURIComponent('Consulta')}`
+        : null;
+      return {
+        name,
+        role: r.title || 'Docente',
+        room: r.room_code || null,
+        avatar: p.avatar_url || null,
+        employee: p.identifier || null,
+        contactUrl: gmailUrl
+      };
+    });
+
+  const programs = (programsRes.data || [])
+    .map(r => r?.programs?.name)
+    .filter(Boolean);
+
+  const rooms = roomsRes.data || [];
+  const aulas = rooms
+    .filter(r => (r.kind || '').toLowerCase().includes('aula') || (r.kind || '').toLowerCase() === 'classroom')
+    .map(r => r.code);
+  const oficinas = rooms
+    .filter(r => (r.kind || '').toLowerCase().includes('oficina') || (r.kind || '').toLowerCase() === 'office')
+    .map(r => r.code);
+
+  return { personal, carreras: programs, aulas, oficinas };
+}
 
 export default function CampusMap() {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
-  const mapReadyRef = useRef(false);
-
   const [selectedBuilding, setSelectedBuilding] = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
-  const selectedIdRef = useRef(null); // evita el closure viejo
+  const selectedIdRef = useRef(null);
 
   useEffect(() => {
     const map = new maplibregl.Map({
@@ -77,85 +158,72 @@ export default function CampusMap() {
     }), 'top-right');
 
     map.on('load', async () => {
-      mapReadyRef.current = true;
-
-      // 1) Cargar GeoJSON
+      // 1) Carga del GeoJSON (con properties.building_id ya presente)
       let gj;
-      try {
-        gj = await loadGeoJSON(buildingsGeo);
-      } catch (err) {
-        console.error('[CampusMap] Error cargando GeoJSON:', err);
-        return;
-      }
-      const count = Array.isArray(gj?.features) ? gj.features.length : 0;
-      console.log(`[CampusMap] GeoJSON features: ${count}`);
-      if (!count) return;
-
-      // 2) Fuente con promoteId
-      if (!map.getSource(SOURCE_ID)) {
-        map.addSource(SOURCE_ID, { type: 'geojson', data: gj, promoteId: 'id' });
+      try { gj = await loadGeoJSON(buildingsGeo); }
+      catch (err) { console.error('[CampusMap] GeoJSON:', err); return; }
+      if (!Array.isArray(gj?.features) || !gj.features.length) {
+        console.warn('[CampusMap] GeoJSON vacío'); return;
       }
 
-      // 3) Capas encima de labels
-      const firstSymbolId = map.getStyle()?.layers?.find(l => l.type === 'symbol')?.id;
+      // 2) Fuente
+      if (!hasSource(map, SOURCE_ID)) {
+        try { map.addSource(SOURCE_ID, { type: 'geojson', data: gj, promoteId: 'id' }); }
+        catch (e) { console.warn('addSource skipped:', e); }
+      }
 
-      if (!map.getLayer(FILL_LAYER_ID)) {
-        map.addLayer({
-          id: FILL_LAYER_ID,
-          type: 'fill',
-          source: SOURCE_ID,
-          filter: ['any',
-            ['==', ['geometry-type'], 'Polygon'],
-            ['==', ['geometry-type'], 'MultiPolygon']
-          ],
-          paint: {
-            'fill-color': [
-              'case',
-              ['boolean', ['feature-state', 'selected'], false], '#71007B',
-              '#71007B'
+      // 3) Capas por encima de labels
+      const symbolId = firstSymbolId(map);
+
+      if (!hasLayer(map, FILL_LAYER_ID)) {
+        try {
+          map.addLayer({
+            id: FILL_LAYER_ID,
+            type: 'fill',
+            source: SOURCE_ID,
+            filter: ['any',
+              ['==', ['geometry-type'], 'Polygon'],
+              ['==', ['geometry-type'], 'MultiPolygon']
             ],
-            'fill-opacity': [
-              'case',
-              ['boolean', ['feature-state', 'selected'], false], 0.38,
-              0.22
-            ],
-            'fill-antialias': true
-          }
-        }, firstSymbolId);
+            paint: {
+              'fill-color': '#71007B',
+              'fill-opacity': [
+                'case',
+                ['boolean', ['feature-state', 'selected'], false], 0.38,
+                0.22
+              ],
+              'fill-outline-color': 'rgba(0,0,0,0)'
+            }
+          }, symbolId);
+        } catch (e) { console.warn('addLayer FILL skipped:', e); }
       }
 
-      if (!map.getLayer(POINT_LAYER_ID)) {
-        map.addLayer({
-          id: POINT_LAYER_ID,
-          type: 'circle',
-          source: SOURCE_ID,
-          filter: ['==', ['geometry-type'], 'Point'],
-          paint: {
-            'circle-radius': [
-              'case',
-              ['boolean', ['feature-state', 'selected'], false], 8,
-              6
-            ],
-            'circle-opacity': 0.9,
-            'circle-stroke-width': 2,
-            'circle-color': '#71007B',
-            'circle-stroke-color': '#ECF0F5'
-          }
-        }, firstSymbolId);
+      if (!hasLayer(map, POINT_LAYER_ID)) {
+        try {
+          map.addLayer({
+            id: POINT_LAYER_ID,
+            type: 'circle',
+            source: SOURCE_ID,
+            filter: ['==', ['geometry-type'], 'Point'],
+            paint: {
+              'circle-radius': ['case', ['boolean', ['feature-state', 'selected'], false], 8, 6],
+              'circle-opacity': 0.9,
+              'circle-stroke-width': 2,
+              'circle-color': '#71007B',
+              'circle-stroke-color': '#ECF0F5'
+            }
+          }, symbolId);
+        } catch (e) { console.warn('addLayer POINT skipped:', e); }
       }
 
-      // ---- Enfoque y highlight
       const focusFeature = (f) => {
         const id = f.id ?? f.properties?.id;
         if (id == null) return;
 
         const prev = selectedIdRef.current;
-        if (prev && prev !== id) {
-          safeSetFeatureState(map, SOURCE_ID, prev, { selected: false });
-        }
+        if (prev && prev !== id) safeSetFeatureState(map, SOURCE_ID, prev, { selected: false });
         safeSetFeatureState(map, SOURCE_ID, id, { selected: true });
         selectedIdRef.current = id;
-        setSelectedId(id);
 
         if (f.geometry?.type === 'Polygon' || f.geometry?.type === 'MultiPolygon') {
           const [minX, minY, maxX, maxY] = turf.bbox(f);
@@ -165,90 +233,58 @@ export default function CampusMap() {
         }
       };
 
-      // ---- Abre modal y carga personal desde Supabase
+      // --- Abre modal y carga detalles desde Supabase
       const openModalFromFeature = async (feature) => {
         if (!feature) return;
 
         const props = feature.properties || {};
         const featureId = feature.id ?? props.id ?? null;
 
-        // Derivar buildingId (usa tus claves en properties: ud3, ud2, etc.)
-        let buildingId =
-          props.building_id ||
-          props.ud3 || props.ud2 || props.ud1 ||
-          props.cafeteria || props.arquitectura || props.culturales || props.hangar ||
-          null;
+        // 🔴 Punto A: toma SIEMPRE el building_id del GeoJSON
+        let buildingId = (props.building_id || '').toLowerCase().trim();
 
+        // Fallback por si alguna feature antigua no lo trae
         if (!buildingId && typeof props.nombre === 'string') {
           const up = props.nombre.toUpperCase().trim();
           if (/^UD\d+$/.test(up)) buildingId = up.toLowerCase();
         }
+        if (!buildingId) {
+          console.warn('No pude inferir buildingId del feature. Props:', props);
+        }
 
-        let personal = [];
+        // Pide datos reales
+        let carreras = [], aulas = [], oficinas = [], personal = [];
         try {
           if (buildingId) {
-            const { data: staffRows, error } = await supabase
-              .from('building_staff')
-              .select(`
-                title,
-                room_code,
-                profiles (
-                  first_name,
-                  last_name,
-                  avatar_url,
-                  identifier
-                )
-              `)
-              .eq('building_id', buildingId)
-              .order('title', { ascending: true });
-
-            if (error) throw error;
-
-            personal = (staffRows || [])
-              .filter(r => r?.profiles)
-              .map(r => ({
-                name: `${r.profiles.first_name ?? ''} ${r.profiles.last_name ?? ''}`.trim() || 'Sin nombre',
-                role: r.title || 'Docente',
-                room: r.room_code || null,
-                avatar: r.profiles.avatar_url || null,
-                employee: r.profiles.identifier || null
-              }));
-          } else {
-            console.warn('No pude inferir buildingId del feature. Props:', props);
+            const fetched = await fetchBuildingData(buildingId);
+            carreras = fetched.carreras;
+            aulas    = fetched.aulas;
+            oficinas = fetched.oficinas;
+            personal = fetched.personal;
           }
         } catch (e) {
-          console.error('Supabase error building_staff:', e);
+          console.error('Supabase error (detalles edificio):', e);
         }
 
         setSelectedBuilding({
           id: buildingId || featureId,
           name: props.nombre ?? props.name ?? 'Edificio',
           description: props.descripcion ?? props.description ?? '',
-          image360: props.image360_url ?? props.foto ?? null,
-          carreras: [], aulas: [], oficinas: [],
-          personal
+          image360: props.photo_url || props.image360_url || props.foto || null,
+          carreras, aulas, oficinas, personal
         });
 
-        // highlight + zoom
         if (featureId != null) {
           const prev = selectedIdRef.current;
-          if (prev && prev !== featureId) {
-            safeSetFeatureState(map, SOURCE_ID, prev, { selected: false });
-          }
+          if (prev && prev !== featureId) safeSetFeatureState(map, SOURCE_ID, prev, { selected: false });
           safeSetFeatureState(map, SOURCE_ID, featureId, { selected: true });
           selectedIdRef.current = featureId;
-          setSelectedId(featureId);
         }
         focusFeature(feature);
       };
 
-      // Interacción
-      map.on('click', FILL_LAYER_ID, async (e) => {
-        await openModalFromFeature(e.features?.[0]);
-      });
-      map.on('click', POINT_LAYER_ID, async (e) => {
-        await openModalFromFeature(e.features?.[0]);
-      });
+      map.on('click', FILL_LAYER_ID, async (e) => { await openModalFromFeature(e.features?.[0]); });
+      map.on('click', POINT_LAYER_ID, async (e) => { await openModalFromFeature(e.features?.[0]); });
 
       const setPointer = () => (map.getCanvas().style.cursor = 'pointer');
       const unsetPointer = () => (map.getCanvas().style.cursor = '');
@@ -260,30 +296,29 @@ export default function CampusMap() {
 
     mapRef.current = map;
     return () => {
-      mapReadyRef.current = false;
       try { map.remove(); } catch {}
       mapRef.current = null;
+      selectedIdRef.current = null;
     };
   }, []);
 
   return (
-    <>
-      <div ref={mapContainer} style={{ width: '100%', height: '100vh' }} />
+    <div className="bi-host" style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <div ref={mapContainer} className="map-canvas" style={{ position: 'absolute', inset: 0 }} />
       {selectedBuilding && (
         <BuildingInfoModal
           building={selectedBuilding}
           onClose={() => {
             const map = mapRef.current;
             const prev = selectedIdRef.current;
-            if (map && map.style && prev != null) {
+            if (styleReady(map) && prev != null) {
               safeSetFeatureState(map, SOURCE_ID, prev, { selected: false });
             }
             selectedIdRef.current = null;
-            setSelectedId(null);
             setSelectedBuilding(null);
           }}
         />
       )}
-    </>
+    </div>
   );
 }

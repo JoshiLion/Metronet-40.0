@@ -7,10 +7,10 @@ import LabSessionApp  from './pages/LabSession/LabSessionApp.js'
 
 import PrivateRoute   from './components/PrivateRoute/PrivateRoute'
 import AppLayout      from './components/AppLayout/AppLayout'
-import CampusMap from './components/Map/CampusMap.jsx'
+import CampusMap      from './components/Map/CampusMap.jsx'
 
 import HomePage       from './pages/Home/HomePage'
-import LionMapPage from './pages/LionMap/LionMapPage.js'
+import LionMapPage    from './pages/LionMap/LionMapPage.js'
 import ProfilePage    from './pages/Profile/ProfilePage'
 import LabTrackPage   from './pages/LabTrack/LabTrackPage'
 
@@ -20,20 +20,41 @@ export default function App() {
       {/* 1) Login: pública */}
       <Route path="/login" element={<LoginPage />} />
 
-      {/* 2) Flujo de Sesión de Laboratorio: también pública */}
+      {/* 2) Modo invitado: público, SIN layout (solo mapa full-screen) */}
+      <Route
+        path="/guest-map"
+        element={
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'var(--color-bg, #ECF0F5)',
+              width: '100vw',
+              height: '100vh',
+              overflow: 'hidden'
+            }}
+          >
+            <div style={{ position: 'absolute', inset: 0 }}>
+              <CampusMap />
+            </div>
+          </div>
+        }
+      />
+
+      {/* 3) Flujo de Sesión de Laboratorio: también pública */}
       <Route path="/lab/session/*" element={<LabSessionApp />} />
 
-      {/* 3) Rutas privadas con sidebar y header */}
+      {/* 4) Rutas privadas con sidebar y header */}
       <Route element={<PrivateRoute />}>
         <Route element={<AppLayout />}>
-          <Route index       element={<HomePage      />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="lab"     element={<LabTrackPage/>} />
-          <Route path="map" element={<LionMapPage />} />
+          <Route index            element={<HomePage      />} />
+          <Route path="profile"   element={<ProfilePage   />} />
+          <Route path="lab"       element={<LabTrackPage  />} />
+          <Route path="map"       element={<LionMapPage   />} />
         </Route>
       </Route>
 
-      {/* 4) Cualquier otra → login */}
+      {/* 5) Cualquier otra → login */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )

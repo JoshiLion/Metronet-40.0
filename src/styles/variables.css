@@ -4,6 +4,7 @@
   --color-white: #ffffff;
   --color-text: #333333;
   --color-placeholder: #999999;
+  --app-header-h: 64px;
 
     /* Nuevas variables para InputField */
   --input-border-default: #ddd;
@@ -16,3 +17,5 @@
    --color-white-hover: #D9E0E8;
    
 }
+
+

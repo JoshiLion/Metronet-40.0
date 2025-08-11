@@ -12,6 +12,11 @@
 /build
 
 # misc
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.seeder.example
 .DS_Store
 .env.local
 .env.development.local

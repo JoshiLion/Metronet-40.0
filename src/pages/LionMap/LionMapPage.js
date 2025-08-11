@@ -3,6 +3,11 @@ import React from 'react'
 import CampusMap from '../../components/Map/CampusMap'
 import UserCard  from '../../components/UserCard/UserCard'
 
-export default function MapPage() {
-  return <CampusMap />
+export default function LionMapPage() {
+  return (
+    // 👇 este wrapper solo existe en la página del mapa
+    <div className="map-shell">
+      <CampusMap />
+    </div>
+  );
 }

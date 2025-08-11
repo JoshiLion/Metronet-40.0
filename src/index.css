@@ -49,3 +49,19 @@ textarea {
   flex-direction: column;
   flex: 1;
 }
+
+
+/* El wrapper de la página del mapa ocupa todo lo que queda bajo el header */
+.map-shell {
+  height: calc(100vh - var(--app-header-h));
+  padding: 0;             /* sin márgenes alrededor del mapa */
+  overflow: hidden;       /* nada de scroll alrededor */
+  display: block;         /* por si el parent es un flex/grid raro */
+}
+
+/* El host del mapa y su canvas llenan al 100% del wrapper */
+.map-shell .bi-host { height: 100%; }
+.map-shell .map-canvas { height: 100%; }
+
+/* Si tu layout mete padding a .main-content, neutralízalo SOLO aquí */
+.map-shell.main-content { padding: 0 !important; }
