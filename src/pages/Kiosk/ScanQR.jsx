@@ -47,73 +47,45 @@ export default function ScanQR() {
 
   useEffect(() => {
     let cancelled = false;
-    if (camState !== 'starting') return;  // sólo arrancar cuando pidamos "starting"
 
     async function boot() {
+      setCamState('starting');
       setError('');
 
       try {
         const codeReader = new BrowserMultiFormatReader();
-        // Sólo QR para rendimiento
+        // Only QR for speed
         const hints = new Map();
         hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.QR_CODE]);
         codeReader.hints = hints;
         readerRef.current = codeReader;
 
-        const onDecode = (result, err, _controls) => {
-          if (cancelled) return;
-          if (result) {
-            const raw = result.getText().trim();
-            const match = raw.match(/\b\d{7,12}\b/);
-            const id = match ? match[0] : raw;
+        const devices = await BrowserMultiFormatReader.listVideoInputDevices();
+        const rear =
+          devices.find(d => (d.label || '').toLowerCase().includes('back')) ||
+          devices[devices.length - 1];
+        const deviceId = rear?.deviceId;
 
-            cancelled = true;
-            try { _controls?.stop(); } catch {}
-            stopRef.current = null;
+        const controls = await codeReader.decodeFromVideoDevice(
+          deviceId,
+          videoRef.current,
+          (result, err, _controls) => {
+            if (cancelled) return;
+            if (result) {
+              const raw = result.getText().trim();
+              const match = raw.match(/\b\d{7,12}\b/);
+              const id = match ? match[0] : raw;
 
-            nav(`/kiosk/${labId}/session/${sessionId}/seat`, {
-              state: { studentIdentifier: id }
-            });
-          }
-        };
+              cancelled = true;
+              try { _controls?.stop(); } catch {}
+              stopRef.current = null;
 
-        // Helper para constraints
-        const startWithConstraints = (videoConstraints) =>
-          codeReader.decodeFromConstraints(
-            { audio: false, video: videoConstraints },
-            videoRef.current,
-            onDecode
-          );
-
-        let controls;
-
-        // 1) Intenta frontal (user)
-        try {
-          controls = await startWithConstraints({ facingMode: 'user' });
-        } catch {
-          // 2) Variante "ideal"
-          try {
-            controls = await startWithConstraints({ facingMode: { ideal: 'user' } });
-          } catch {
-            // 3) Fallback: trasera si la frontal no está disponible
-            try {
-              controls = await startWithConstraints({ facingMode: { ideal: 'environment' } });
-            } catch {
-              // 4) Último recurso: enumerar dispositivos y elegir por etiqueta
-              const devices = await BrowserMultiFormatReader.listVideoInputDevices();
-              const front =
-                devices.find(d => /front|user|frontal|delantera/i.test(d.label || '')) ||
-                devices[0]; // si no hay pistas, agarramos la primera
-              const deviceId = front?.deviceId;
-
-              controls = await codeReader.decodeFromVideoDevice(
-                deviceId,
-                videoRef.current,
-                onDecode
-              );
+              nav(`/kiosk/${labId}/session/${sessionId}/seat`, {
+                state: { studentIdentifier: id }
+              });
             }
           }
-        }
+        );
 
         stopRef.current = () => controls?.stop?.();
         setCamState('running');
@@ -127,13 +99,12 @@ export default function ScanQR() {
     boot();
 
     return () => {
-      cancelled = true;
       try { stopRef.current?.(); } catch {}
       try { readerRef.current?.reset?.(); } catch {}
       stopRef.current = null;
       readerRef.current = null;
     };
-  }, [camState, labId, sessionId, nav]); // 👈 importante: reaccionar a camState
+  }, [labId, sessionId, nav]);
 
   const continueSeat = () => {
     const id = (matricula || '').trim();
@@ -144,17 +115,16 @@ export default function ScanQR() {
   };
 
   const restartCamera = () => {
-    // forzar cleanup + nuevo boot (remontar lógica)
+    // forzar cleanup + nuevo boot (remontar logica)
     try { stopRef.current?.(); } catch {}
     try { readerRef.current?.reset?.(); } catch {}
     stopRef.current = null;
     readerRef.current = null;
     setCamState('idle');
-    // arrancar en el siguiente tick
     setTimeout(() => setCamState('starting'), 0);
   };
 
-  return (
+ return (
     <div className="kio">
       <div className="kio__wrap">
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
