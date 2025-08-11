@@ -5,14 +5,11 @@ export default function PrivateRoute() {
   const { session, loading } = useAuth()
   const location = useLocation()
 
-  // Espera a que Auth termine antes de decidir
-  if (loading) return null
+  if (loading) return null // puedes poner un spinner aquí
 
-  // Si no hay sesión, manda a login y guarda a dónde quería ir
   if (!session) {
+    // manda a login recordando a dónde quería ir
     return <Navigate to="/login" replace state={{ from: location }} />
   }
-
-  // Si hay sesión, renderiza lo protegido
   return <Outlet />
 }

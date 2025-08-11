@@ -12,7 +12,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true
 
-    // 1) Cargar sesión al montar (sin navegar)
+    // 1) Cargar sesión al montar (SIN navegar)
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return
       const s = data?.session ?? null
@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
       else setLoading(false)
     })
 
-    // 2) Suscribirse a cambios de auth (sin navegar)
+    // 2) Suscripción a cambios de auth (SIN navegar)
     const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next)
       if (next) fetchProfile(next.user.id)

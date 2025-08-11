@@ -1,47 +1,42 @@
-// src/pages/LoginPage.js
+// src/pages/Login/LoginPage.js
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../../supabaseClient'
 import InputField from '../../components/InputField/inputField'
 import PrimaryButton from '../../components/PrimaryButton/primaryButton'
 import { ReactComponent as UserIcon } from '../../assets/iconos/user.svg'
 import { ReactComponent as LockIcon } from '../../assets/iconos/lock.svg'
-import './LoginPreview.css'  // reaprovechamos estilos
+import './LoginPreview.css'
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword]     = useState('')
   const [error, setError]           = useState('')
   const [loading, setLoading]       = useState(false)
+
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || '/'
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
-    // 1) Construye el email
-    const email = `${identifier}@alumnos.upmh.edu.mx`
-
-    // 2) Llama a supabase
-    const { data, error: err } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    })
-    console.log('Login attempt:', { email, err, data })
-
-    // 3) Apaga el loading
-    setLoading(false)
-
-    // 4) Muestra error si lo hay
-    if (err) {
-      setError(err.message)
+    try {
+      const email = `${identifier}@alumnos.upmh.edu.mx`
+      const { error: err } = await supabase.auth.signInWithPassword({ email, password })
+      if (err) throw err
+      // login OK -> vuelve a donde ibas (o /)
+      navigate(from, { replace: true })
+    } catch (err) {
+      setError(err.message || 'No se pudo iniciar sesión')
+    } finally {
+      setLoading(false)
     }
-    // Si no hay err, tu AuthContext redirige automáticamente a /profile
   }
 
   const handleGuest = () => {
-    // Ruta pública sin layout (solo mapa)
     navigate('/guest-map', { replace: true })
   }
 
@@ -76,7 +71,6 @@ export default function LoginPage() {
             {loading ? 'Cargando…' : 'Entrar'}
           </PrimaryButton>
 
-          {/* link morado dentro de la card (no envía el form) */}
           <button
             type="button"
             className="guest-link login-box__guest"
