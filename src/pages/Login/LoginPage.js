@@ -6,7 +6,7 @@ import InputField from '../../components/InputField/inputField'
 import PrimaryButton from '../../components/PrimaryButton/primaryButton'
 import { ReactComponent as UserIcon } from '../../assets/iconos/user.svg'
 import { ReactComponent as LockIcon } from '../../assets/iconos/lock.svg'
-import './LoginPreview.css'
+import './LoginPreview.css'  // reaprovechamos estilos
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('')
@@ -20,16 +20,28 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    const email = `${identifier}@metronet.local`
-    const { data, error: err } = await supabase.auth.signInWithPassword({ email, password })
+    // 1) Construye el email
+    const email = `${identifier}@alumnos.upmh.edu.mx`
 
+    // 2) Llama a supabase
+    const { data, error: err } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    })
+    console.log('Login attempt:', { email, err, data })
+
+    // 3) Apaga el loading
     setLoading(false)
-    if (err) setError(err.message)
-    // La redirección la hace tu AuthContext al detectar sesión
+
+    // 4) Muestra error si lo hay
+    if (err) {
+      setError(err.message)
+    }
+    // Si no hay err, tu AuthContext redirige automáticamente a /profile
   }
 
   const handleGuest = () => {
-    // Ruta pública sin layout
+    // Ruta pública sin layout (solo mapa)
     navigate('/guest-map', { replace: true })
   }
 
@@ -64,7 +76,7 @@ export default function LoginPage() {
             {loading ? 'Cargando…' : 'Entrar'}
           </PrimaryButton>
 
-          {/* link morado dentro de la card */}
+          {/* link morado dentro de la card (no envía el form) */}
           <button
             type="button"
             className="guest-link login-box__guest"

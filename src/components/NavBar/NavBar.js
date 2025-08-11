@@ -42,7 +42,7 @@ export default function NavBar() {
     { id: 'profile', label: 'Mi perfil', icon: ProfileIcon, path: '/' },
     { id: 'map',     label: 'Mapa',      icon: MapIcon,     path: '/map' },
     ...(profile.role === 'professor' && profile.is_lab_admin
-      ? [{ id: 'lab', label: 'LabTrack', icon: LabIcon, path: '/lab' }]
+      ? [{ id: 'lab', label: 'LabTrack', icon: LabIcon, path: '/labtrack' }]
       : [])
   ]
 

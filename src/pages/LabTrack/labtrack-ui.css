@@ -1,0 +1,170 @@
+/* src/pages/LabTrack/labtrack-ui.css */
+:root {
+  --bg: #ECF0F5;
+  --ink: #111827;
+  --muted: #6b7280;
+  --brand: #71007B;
+  --card: #fff;
+  --stroke: #e5e7eb;
+  --free: #e8f5e9;
+  --busy: #fff4f4;
+
+   /* Nuevo: paleta neutral para estados */
+  --free-bg: #F3F4F6;     /* gris claro para LIBRE */
+  --free-stroke: #E5E7EB;
+  --occ-bg: #FFFFFF;      /* blanco para OCUPADA */
+  --occ-stroke: #E5E7EB;
+}
+
+.lt-container { padding: 24px; background: var(--bg); min-height: 100%; }
+.lt-header h1 { margin: 0 0 4px; color: var(--ink); font-weight: 700; }
+.lt-muted { color: var(--muted); }
+.lt-link { background: transparent; border: 0; color: var(--brand); cursor: pointer; margin-top: 8px; }
+
+.lt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.lt-card {
+  background: var(--card); border: 1px solid var(--stroke); border-radius: 16px; padding: 16px;
+  text-align: left;
+}
+.lt-card.clickable { cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+.lt-card.clickable:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,.06); }
+.lt-card-title { font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.lt-card-sub { color: var(--muted); margin-bottom: 10px; }
+.lt-pill { display: inline-block; font-size: 12px; background: #f3f4f6; border: 1px solid var(--stroke); padding: 6px 10px; border-radius: 999px; }
+.lt-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.lt-badge { font-size: 12px; background: #f5f3ff; color: var(--brand); border:1px solid #e9d5ff; padding: 6px 10px; border-radius: 999px; }
+.lt-note { font-size: 12px; color: var(--muted); }
+
+.lt-footer { margin-top: 24px; display: flex; justify-content: flex-end; }
+.lt-primary {
+  background: var(--brand); color: #fff; border: 0; padding: 12px 18px; border-radius: 12px; cursor: pointer;
+  font-weight: 600; box-shadow: 0 6px 14px rgba(113,0,123,.18); transition: transform .12s ease, box-shadow .12s ease;
+}
+.lt-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 18px rgba(113,0,123,.22); }
+
+.lt-skeleton-list { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:16px; }
+.lt-skeleton-card { height: 110px; background: linear-gradient(90deg,#eee,#f3f3f3,#eee); border-radius: 14px; animation: pulse 1.2s infinite; }
+.lt-skeleton-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:12px; }
+.lt-skeleton-tile { height: 90px; background: linear-gradient(90deg,#eee,#f3f3f3,#eee); border-radius: 12px; animation: pulse 1.2s infinite; }
+@keyframes pulse { 0%{background-position:-200px 0}100%{background-position:calc(200px + 100%) 0} }
+
+.lt-empty {
+  margin: 24px 0; padding: 20px; background:#f8fafc; border: 1px dashed var(--stroke); border-radius: 12px; color: var(--muted);
+}
+
+
+/* --- Grid más sensible --- */
+.lt-grid-machines {
+
+    margin-top: 2rem;
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+@media (max-width: 640px) {
+  .lt-grid-machines { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+}
+
+/* --- Tarjeta base --- */
+.lt-machine {
+  background: var(--card);
+  border:1px solid var(--stroke);
+  border-radius: 14px;
+  padding: 12px;
+  transition: box-shadow .15s ease, transform .12s ease, border-color .15s ease;
+}
+
+/* ✅ LIBRE = gris claro */
+/* ✅ LIBRE: gris claro */
+.lt-machine.free {
+  background: #F3F4F6; /* gris claro */
+  border-color: #E5E7EB;
+}
+
+/* ✅ OCUPADA: blanco */
+.lt-machine.occupied {
+  background: #FFFFFF;
+  border-color: #E5E7EB;
+}
+
+
+/* Hover sutil (sin cambiar colores de estado) */
+.lt-machine:hover {
+  box-shadow: 0 8px 18px rgba(0,0,0,.06);
+  transform: translateY(-1px);
+}
+
+.lt-machine-title { font-weight: 700; margin-bottom: 6px; color: var(--ink); }
+.lt-machine-body  { font-size: 14px; }
+.lt-strong { font-weight: 600; }
+.lt-mono   { font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace; }
+
+/* Skeleton y empty se quedan igual */
+
+
+
+
+
+/* ====== Sesiones: cards en móvil, lista en escritorio ====== */
+
+/* Base (móvil/tablet): sigue como tarjetitas apiladas */
+.lt-session-row {
+  width: 100%;
+  text-align: left;
+}
+
+/* PC ≥ 1024px: convertir a lista horizontal de ancho completo */
+@media (min-width: 1024px) {
+  /* El contenedor deja de ser grid de tarjetas y pasa a columna */
+  .lt-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Cada card se comporta como fila */
+  .lt-session-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+
+  .lt-card-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 40%;
+  }
+
+  .lt-card-title {
+    margin: 0;             /* compactamos */
+    font-weight: 700;
+  }
+
+  .lt-card-sub {
+    margin: 0;
+  }
+
+  .lt-card-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;        /* por si el nombre del profe es largo */
+  }
+
+  /* Hover sutil tipo fila */
+  .lt-session-row:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(0,0,0,.06);
+  }
+}
+
+/* Ultra-wide: que no quede pegado al borde, se lee mejor centrado */
+@media (min-width: 1440px) {
+  .lt-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}

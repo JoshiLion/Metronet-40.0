@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>QRs de alumnos</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Lib de QR (sin instalar nada) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-MG7tU2QK8m7n8m0mT1O1Qv2vJgK0JcXr0F2u3y7o0LJmY3u4o2VwN3b8p0vKqD5sD8b3J3q8mWZx1r5jvB6x2w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    :root{
+      --size: 220px; /* cambia tamaño del QR aquí si quieres */
+      --gap: 18px;
+      --font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Segoe UI Symbol";
+    }
+    body{ font-family: var(--font); margin: 0; background:#f6f7fb; color:#222;}
+    header{
+      position: sticky; top:0; background:#fff; border-bottom:1px solid #e8e8e8;
+      padding:12px 16px; display:flex; gap:12px; align-items:center; z-index:2;
+    }
+    header h1{ font-size:16px; margin:0; font-weight:700; letter-spacing:.2px; }
+    header .spacer{ flex:1; }
+    button{
+      padding:8px 12px; border-radius:10px; border:1px solid #ddd; background:#fff; cursor:pointer;
+    }
+    main{ padding:18px; }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(calc(var(--size) + 30px), 1fr));
+      gap: var(--gap);
+    }
+    .card{
+      background:#fff; border:1px solid #eee; border-radius:14px; padding:12px;
+      display:flex; flex-direction:column; align-items:center; gap:10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.04);
+      break-inside: avoid;
+    }
+    .qr{ width: var(--size); height: var(--size); display:grid; place-items:center; }
+    .name{ font-weight:600; text-align:center; font-size:13px; line-height:1.2; }
+    .id{ font-family: ui-monospace, Menlo, Consolas, monospace; opacity:.7; }
+    .actions{ display:flex; gap:8px; flex-wrap:wrap; }
+    .small{ font-size:12px; opacity:.8; }
+
+    @media print{
+      header{ display:none; }
+      body{ background:#fff; }
+      main{ padding:0; }
+      .grid{ gap: 10mm; grid-template-columns: repeat(3, 1fr); }
+      :root{ --size: 45mm; }
+      .card{ border:none; box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>QRs de alumnos</h1>
+    <div class="spacer"></div>
+    <button id="btn-220">QR 220px</button>
+    <button id="btn-160">QR 160px</button>
+    <button id="btn-imp">Imprimir / Guardar PDF</button>
+  </header>
+
+  <main>
+    <div id="grid" class="grid"></div>
+  </main>
+
+  <script>
+    // 👉 Pega aquí tu lista (sin la contraseña, no hace falta para el QR)
+    const alumnos = [
+      { nombre: "ALFARO PIMENTEL VALERIA XIMENA", matricula: "203110341", imagenUrl: "user-203110341.jpg" },
+      { nombre: "BALMACEDA SANCHEZ ALESSANDRO", matricula: "223111900", imagenUrl: "user-223111900.jpg" },
+      { nombre: "BERLANGA VAZQUEZ JOSE LUIS", matricula: "223111193", imagenUrl: "user-223111193.jpg" },
+      { nombre: "CARRASCO MARTINEZ DAVID", matricula: "223111854", imagenUrl: "user-223111854.jpg" },
+      { nombre: "CORTES RESENDIZ MICHEL", matricula: "223110219", imagenUrl: "user-223110219.jpg" },
+      { nombre: "FLORES ROSALES ARIEL NAIM", matricula: "223110717", imagenUrl: "user-223110717.jpg" },
+      { nombre: "GARCIA HERNANDEZ TANIA SENYAZI", matricula: "223111914", imagenUrl: "user-223111914.jpg" },
+      { nombre: "GONZALEZ GARCIA JUAN DIEGO", matricula: "223110719", imagenUrl: "user-223110719.jpg" },
+      { nombre: "GRAJEDA MORENO ALAN", matricula: "223110100", imagenUrl: "user-223110100.jpg" },
+      { nombre: "HERNANDEZ CASTAÑEDA ERICK MANUEL", matricula: "223111116", imagenUrl: "user-223111116.jpg" },
+      { nombre: "HERNANDEZ GARCIA JESSICA", matricula: "223111294", imagenUrl: "user-223111294.jpg" },
+      { nombre: "HERNANDEZ HERNANDEZ ALFREDO JOSUE", matricula: "223110365", imagenUrl: "user-223110365.jpg" },
+      { nombre: "HINOJOSA CARRILLO YAEL MARTIN", matricula: "223110303", imagenUrl: "user-223110303.jpg" },
+      { nombre: "JUAREZ VITE EFREN", matricula: "223111064", imagenUrl: "user-223111064.jpg" },
+      { nombre: "LOPEZ ESQUIVEL METZTONALLI", matricula: "213111964", imagenUrl: "user-213111964.jpg" },
+      { nombre: "LOZANO ANGELES PAOLA VANESSA", matricula: "223111852", imagenUrl: "user-223111852.jpg" },
+      { nombre: "MARTINEZ GUERRERO ALAN", matricula: "223111621", imagenUrl: "user-223111621.jpg" },
+      { nombre: "MARTINEZ RUBIO JOSUE", matricula: "223111057", imagenUrl: "user-223111057.jpg" },
+      { nombre: "MAYOR MARCELINO JAIR", matricula: "223110485", imagenUrl: "user-223110485.jpg" },
+      { nombre: "MORALES GARCIA ALFONSO", matricula: "223110550", imagenUrl: "user-223110550.jpg" },
+      { nombre: "NAVARRETE LAZCANO JOB", matricula: "223111192", imagenUrl: "user-223111192.jpg" },
+      { nombre: "PEREZ LOPEZ YAMIR", matricula: "223111930", imagenUrl: "user-223111930.jpg" },
+      { nombre: "PEREZ TORRUCO HECTOR", matricula: "223111089", imagenUrl: "user-223111089.jpg" },
+      { nombre: "QUINTANA ESPINOSA ANGEL EDUARDO", matricula: "223111395", imagenUrl: "user-223111395.jpg" },
+      { nombre: "RAMIREZ HERNANDEZ EDUARDO SAHID", matricula: "223112018", imagenUrl: "user-223112018.jpg" },
+      { nombre: "RAMIREZ ROMERO ANA PAOLA", matricula: "223111939", imagenUrl: "user-223111939.jpg" },
+      { nombre: "RIVERO CRUZ FATIMA JULIET", matricula: "223110326", imagenUrl: "user-223110326.jpg" },
+      { nombre: "ROJAS MEJIA YAEL", matricula: "223111293", imagenUrl: "user-223111293.jpg" },
+      { nombre: "SALAS CASASOLA URIEL", matricula: "223110914", imagenUrl: "user-223110914.jpg" },
+      { nombre: "SALINAS HERNANDEZ ALONDRA VIOLETA", matricula: "223110527", imagenUrl: "user-223110527.jpg" },
+      { nombre: "VAZQUEZ MALDONADO ALBERTO", matricula: "223110508", imagenUrl: "user-223110508.jpg" },
+      { nombre: "ZAMUDIO GARDUÑO AXL SAUL", matricula: "223110141", imagenUrl: "user-223110141.jpg" }
+    ];
+
+    // Qué metemos dentro del QR (por requisito: la matrícula tal cual)
+    const encodeQR = (alumno) => alumno.matricula;
+    // Si quisieras un prefijo tipo esquema, usa: `metronet:stu:${alumno.matricula}`
+
+    // Render
+    const grid = document.getElementById('grid');
+    alumnos.forEach(a => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const qrBox = document.createElement('div');
+      qrBox.className = 'qr';
+      card.appendChild(qrBox);
+
+      // Genera el QR
+      const size = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+      new QRCode(qrBox, {
+        text: encodeQR(a),
+        width: size,
+        height: size,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = a.nombre;
+      card.appendChild(name);
+
+      const id = document.createElement('div');
+      id.className = 'id';
+      id.textContent = a.matricula;
+      card.appendChild(id);
+
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+      const btn = document.createElement('button');
+      btn.textContent = 'Descargar PNG';
+      btn.addEventListener('click', () => downloadCardPNG(card, a));
+      actions.appendChild(btn);
+      const hint = document.createElement('span');
+      hint.className = 'small';
+      hint.textContent = 'o usa Imprimir para PDF en hojas';
+      actions.appendChild(hint);
+      card.appendChild(actions);
+
+      grid.appendChild(card);
+    });
+
+   function downloadCardPNG(card, alumno){
+  // intenta obtener <img> o <canvas> generado por qrcodejs
+  const img = card.querySelector('.qr img');
+  const canvas = card.querySelector('.qr canvas');
+
+  const triggerDownload = (dataUrl) => {
+    // Fallback Safari: si no soporta download con data URLs, abrir en nueva pestaña
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = `qr-${alumno.matricula}.png`;
+
+    // Algunos navegadores requieren que esté en el DOM
+    document.body.appendChild(a);
+
+    // Si el navegador no soporta download con data:, abrimos en nueva pestaña
+    const supportsDownload = 'download' in HTMLAnchorElement.prototype;
+    if (!supportsDownload) {
+      window.open(dataUrl, '_blank', 'noopener');
+      a.remove();
+      return;
+    }
+
+    // Click programático
+    setTimeout(() => {
+      a.click();
+      a.remove();
+    }, 0);
+  };
+
+  if (canvas) {
+    // Ya es canvas → directo a PNG
+    try {
+      const dataUrl = canvas.toDataURL('image/png');
+      return triggerDownload(dataUrl);
+    } catch (e) {
+      console.error(e);
+      alert('No pude exportar el canvas del QR.');
+      return;
+    }
+  }
+
+  if (img) {
+    // El QR se generó como <img> (data:image/gif). Lo dibujo en un canvas temporal para forzar PNG.
+    const tempCanvas = document.createElement('canvas');
+    const size = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+    tempCanvas.width = size;
+    tempCanvas.height = size;
+    const ctx = tempCanvas.getContext('2d');
+
+    // Aseguramos que la imagen haya cargado
+    if (img.complete) {
+      ctx.drawImage(img, 0, 0, size, size);
+      const dataUrl = tempCanvas.toDataURL('image/png');
+      return triggerDownload(dataUrl);
+    } else {
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, size, size);
+        const dataUrl = tempCanvas.toDataURL('image/png');
+        triggerDownload(dataUrl);
+      };
+      img.onerror = () => alert('No pude leer la imagen del QR.');
+    }
+    return;
+  }
+
+  alert('No pude encontrar el QR para exportar :(');
+}
+
+
+    // Controles de tamaño e impresión
+    document.getElementById('btn-220').onclick = () => setSize(220);
+    document.getElementById('btn-160').onclick = () => setSize(160);
+    document.getElementById('btn-imp').onclick  = () => window.print();
+
+    function setSize(px){
+      document.documentElement.style.setProperty('--size', px + 'px');
+      // Re-generar QRs al cambiar tamaño:
+      document.querySelectorAll('.qr').forEach((box, i) => {
+        box.innerHTML = '';
+        new QRCode(box, { text: encodeQR(alumnos[i]), width: px, height: px, correctLevel: QRCode.CorrectLevel.M });
+      });
+    }
+  </script>
+</body>
+</html>

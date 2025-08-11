@@ -1,0 +1,316 @@
+/* Usa tus variables globales */
+:root {
+  --bg: #ECF0F5;
+  --ink: #111827;
+  --muted: #6b7280;
+  --brand: #71007B;
+  --card: #fff;
+  --stroke: #e5e7eb;
+}
+
+/* Contenedor centrado y ancho consistente */
+.kio {
+  padding: 24px;
+  min-height: 100%;
+  background: var(--bg);
+
+}
+.kio__wrap {
+  width: 100%;
+  max-width: 960px;         /* 🔧 ancho estándar escritorio */
+  margin: 0 auto;           /* 🔧 centra todo */
+  
+}
+
+/* Títulos y subtítulos */
+.kio__title {
+  margin: 0 0 12px;
+  color: var(--brand);
+  font-weight: 700;
+}
+.kio__subtitle {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+/* Tarjeta / panel */
+.kio-card {
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+/* Filas de formulario */
+.kio-field { margin-bottom: 16px; }
+.kio-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+/* Controles */
+.kio-input, .kio-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  font: inherit;
+  background: #fff;
+}
+
+/* Botón primario */
+.kio-primary {
+  background: var(--brand);
+  color: #fff;
+  border: 0;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.kio-primary:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Botones opción (chips) */
+.kio-options {
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.kio-chip {
+  padding: 12px 16px;
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.kio-chip--active {
+  border-color: var(--brand);
+  background: #F5EAF7;
+}
+
+/* Cámara QR: mantiene proporción y no se descuadra */
+.kio-camera {
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+.kio-camera video {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.kio-camera__overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+}
+
+/* Teclado numérico centrado y del mismo tamaño */
+.kio-keypad {
+  margin: 24px auto 0;
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  grid-template-rows: repeat(4, 80px);
+  gap: 12px;
+  justify-content: center;
+}
+
+.kio-key {
+  background: var(--color-white);
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.kio-key:hover {
+  background: var(--color-bg);
+}
+
+
+/* Lista de labs centrada */
+.kio-list {
+  display: grid;
+  grid-template-columns: 1fr; /* fila única, ancho fijo */
+  gap: 12px;
+  max-width: 720px;
+  margin: 0 auto;            /* 🔧 centrado */
+}
+.kio-list__item {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  padding: 18px 16px;
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  background: #fff;
+}
+
+/* Grid de asientos: centrado y baldosas iguales */
+.kio-seats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+  max-width: 960px;          /* 🔧 alinea con el wrap */
+  margin: 12px auto 0;       /* 🔧 centrado */
+}
+.kio-seat {
+  padding: 16px 0;
+  border: 2px solid #c084fc;
+  border-radius: 12px;
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.kio-seat--active { border-color: var(--brand); }
+.kio-seat--disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* Mensajes */
+.kio-error { color: #B00020; }
+
+/* Responsive pequeños */
+@media (max-width: 640px) {
+  .kio__wrap { max-width: 560px; }
+  .kio-keypad { grid-template-columns: repeat(3, 1fr); }
+}
+
+
+
+
+.kio-form {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.kio-card {
+    margin-top: 4rem;
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.kio-field {
+  margin-bottom: 16px;
+}
+
+.kio-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+
+/* 1) Centro real del contenido */
+.kio__wrap{
+  max-width: 1100px;      /* ancho de la vista */
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* El bloque del formulario: TODAS las pantallas comparten este ancho */
+.kio-form{
+  width: 100%;
+  max-width: 720px;       /* <- aquí se centra el “panel” de la forma */
+  margin: 0 auto;
+}
+
+/* Tarjeta estándar del formulario */
+.kio-card{
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding:6rem;
+  box-sizing: border-box;
+}
+
+/* 2) Chips iguales y centrados en cuadrícula */
+.kio-options{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+  gap: 10px;
+  justify-items: center;  /* centra el contenido en cada celda */
+}
+
+.kio-chip{
+  width: 100%;            /* cada chip llena su celda */
+  padding: 25px 0;
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Variante activa */
+.kio-chip--active{
+  border-color: var(--brand);
+  background: #F5EAF7;
+}
+
+/* Select y entradas a full width dentro de la tarjeta */
+.kio-select, .kio-input{
+  width: 100%;
+}
+
+
+
+
+/* --- Pad numérico con input del mismo ancho --- */
+:root{ --kio-key: 84px; --kio-gap: 12px; }
+
+.kio-pad {
+  display: grid;
+  grid-template-columns: repeat(3, var(--kio-key));
+  grid-auto-rows: var(--kio-key);
+  gap: var(--kio-gap);
+  justify-content: center;   /* centra el bloque completo */
+  margin-top: 16px;
+}
+
+/* Input estilo pastilla, MISMA ALTURA que una tecla y MISMO ANCHO del grid */
+.kio-pin {
+  grid-column: 1 / -1;
+  height: var(--kio-key);
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  background: var(--color-white);
+  text-align: center;
+  font-size: 1.25rem;
+
+  box-sizing: border-box;
+}
+
+/* Teclas */
+.kio-key {
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--stroke);
+  border-radius: 14px;
+  background:#fff;
+  font-size: 1.5rem; font-weight:600; color: var(--ink);
+  cursor:pointer; transition: background .15s, transform .06s;
+}
+.kio-key:hover { background:#F3F4F6; }
+.kio-key:active { transform: scale(.98); }
+
+/* Botón validar centrado bajo el pad */
+.kio-actions { margin-top: 16px; text-align:center; }
+
+/* Título dentro de la card */
+.kio-card__header { margin-bottom: 16px; text-align:center; }
+.kio-card__title  { margin:0; color: var(--brand); font-weight:600; font-size: 2rem; }
