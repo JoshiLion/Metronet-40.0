@@ -1,73 +1,68 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../supabaseClient'
-import { useNavigate } from 'react-router-dom'
 
-const AuthContext = createContext()
+const AuthContext = createContext(null)
 export const useAuth = () => useContext(AuthContext)
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [profile, setProfile] = useState(null)
-  const navigate              = useNavigate()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // 1) Al montar, comprueba si ya hay sesión guardada
+    let mounted = true
+
+    // 1) Cargar sesión al montar (sin navegar)
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session)
-      if (data.session) {
-        fetchProfile(data.session.user.id)
-        navigate('/', { replace: true })
-      }
+      if (!mounted) return
+      const s = data?.session ?? null
+      setSession(s)
+      if (s) fetchProfile(s.user.id).finally(() => mounted && setLoading(false))
+      else setLoading(false)
     })
 
-    // 2) Escucha cambios de auth (login/logout)
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, nextSession) => {
-        setSession(nextSession)
-        if (nextSession) {
-          fetchProfile(nextSession.user.id)
-          navigate('/', { replace: true })
-        } else {
-          setProfile(null)
-          navigate('/login', { replace: true })
-        }
-      }
-    )
-    return () => listener.subscription.unsubscribe()
+    // 2) Suscribirse a cambios de auth (sin navegar)
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
+      setSession(next)
+      if (next) fetchProfile(next.user.id)
+      else setProfile(null)
+    })
+
+    return () => {
+      mounted = false
+      sub?.subscription?.unsubscribe?.()
+    }
   }, [])
 
-  // Trae profile + students + students→programs + professors
   async function fetchProfile(userId) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select(`
-        *,
-        students (
-          quarter,
-          group_name,
-          average_grade,
-          program_id,
-          programs (
-            id,
-            name
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          students (
+            quarter,
+            group_name,
+            average_grade,
+            program_id,
+            programs ( id, name )
+          ),
+          professors (
+            department,
+            title,
+            is_lab_admin
           )
-        ),
-        professors (
-          department,
-          title,
-          is_lab_admin
-        )
-      `)
-      .eq('id', userId)
-      .maybeSingle()
-
-    if (error) console.error('fetchProfile error', error)
-    else setProfile(data)
+        `)
+        .eq('id', userId)
+        .maybeSingle()
+      if (error) throw error
+      setProfile(data)
+    } catch (e) {
+      console.error('fetchProfile error', e)
+      setProfile(null)
+    }
   }
 
-  return (
-    <AuthContext.Provider value={{ session, profile }}>
-      {children}
-    </AuthContext.Provider>
-  )
+  const value = useMemo(() => ({ session, profile, loading }), [session, profile, loading])
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
