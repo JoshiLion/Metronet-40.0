@@ -151,3 +151,15 @@
   line-height: 1.35;
   overflow-wrap: anywhere;            /* evita cortes raros */
 }
+
+/* --- Destello al ubicar profesor desde el buscador --- */
+.card-row.flash {
+  animation: biFlash 1.2s ease-out 1;
+  position: relative;
+}
+@keyframes biFlash {
+  0%   { background: #fff4ff; box-shadow: 0 0 0 0 rgba(113,0,123,0.28); }
+  50%  { background: #f6e7f7; box-shadow: 0 0 0 6px rgba(113,0,123,0.12); }
+  100% { background: #ffffff; box-shadow: 0 0 0 0 rgba(113,0,123,0.00); }
+}
+
